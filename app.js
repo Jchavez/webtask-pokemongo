@@ -3,7 +3,6 @@ var request = require("request");
 
 var app = express();
 
-
 app.get('/', function (req, res) {
 	var latitude0 =  req.query.latitude0;
 	var longitude0 =  req.query.longitude0;
@@ -11,15 +10,18 @@ app.get('/', function (req, res) {
 	var latitude1 =  req.query.latitude1;
 	var longitude1 =  req.query.longitude1;
 
-	var latitude2 =  req.query.latitude2;
-	var longitude2 =  req.query.longitude2;
 	var bodyResponse = "";
 
-
-	var bodyFormData = latitude0+","+longitude0+","+latitude1+","+longitude1+","+latitude2+","+longitude2;
+	var bodyFormData = latitude0+","+longitude0+","+latitude1+","+longitude1;
 	console.log(bodyFormData);
 
-	//?latitude0=-122.39952385425568&longitude0=37.77894066029837&latitude1=-122.39207804203033&longitude1=37.78292608704405&latitude2=-34.5804892&longitude2=-58.4370961
+	//-122.19404099999997,47.6178819,-122.19672203063965,47.627570199064884
+
+	//10900 NE 8th St #700, Bellevue, WA 98004
+	//1905 108th Ave NE, Bellevue, WA 98004, EE. UU.
+	
+
+	//?latitude0=-122.19404099999997&longitude0=47.6178819&latitude1=-122.19672203063965&longitude1=47.627570199064884
 
 	var options = { 
 	method: 'POST',
@@ -27,18 +29,23 @@ app.get('/', function (req, res) {
   	formData: 
   		{ bbox: bodyFormData, zoom: '18'}
  	};
-
-	res.write('WebStask.io PokemonGo JC');
+	
+	res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.write('WebStask.io PokemonGo - PokenStops \n\n');
+    res.write('Form Here (-122.19404099999997,47.6178819): 10900 NE 8th St #700, Bellevue, WA 98004\n');   
+    res.write('To Here (-122.19672203063965,47.627570199064884): 1905 108th Ave NE, Bellevue, WA 98004, EE. UU.\n\n');        
 
 	request(options, function (error, response, body) {
 		if (error) throw new Error(error);
-
 		console.log(body);
-		bodyResponse = body
+
+		res.write(body);
+  		res.end();
+            
 	});
 
-res.write(bodyResponse);
-res.end();
+
+
 });
 
 app.listen(3000, function () {
